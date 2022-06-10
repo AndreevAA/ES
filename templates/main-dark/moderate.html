@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chart.js Example</title>
+    <!-- import plugin script -->
+    <script src='../../static/Charts.min.js'></script>
+  </head>
+  <body>
+
+      <h1>Страница Модератора (Обновление данных)</h1>
+        <a href="/dashboard">Статистика</a>
+        <a href="/log_out">Выход из аккаунта</a>
+        <a href="/moderate">Управление данными</a>
+  <script>
+
+    charset="utf-8"
+
+    var mes = function () {
+        return `<p>Статус: {{ message }}</p>`
+    }
+
+    var tablicza_title = function (arr, form_name, table_name) {
+               var head = arr[0].map(i=>`<th>${i}</th>`).join("");
+               var thead = `<thead><tr>${head}</tr></thead>`;
+
+               var body = arr.slice(1).map(i=>{
+                   var row = 0;
+
+                   return `<form method="post"><input hidden name=${form_name}><tr>${i.map(i=>{
+
+                       row += 1;
+
+                       if (row === arr[0].length - 1) {
+                           return `<th><input name="${arr[0][row - 1]}" value="${i.toString()}"></th><th><p><input type="submit" value="Обновить"></p></th>`
+                       }
+                       else if (row === 1)
+                       {
+                           return `<th>${i.toString()}</th>`
+                       }
+                   return `<th><input name="${arr[0][row - 1]}" value="${i.toString()}"></th>`
+
+                    }).join("")}</tr></form>`}).join("");
+               var tbody = `<tbody>${body}</tbody>`;
+               var table = `<table border="1">
+       <caption>${table_name}</caption>${thead}${tbody}</table>`;
+               return table;
+            }
+    document.write(mes());
+    document.write(tablicza_title({{ users.getvalue()|safe }}, "Таблица users", "user_update"));
+    document.write(tablicza_title({{ passports.getvalue()|safe }}, "Таблица passports",  "passports_update"));
+  </script>
+
+  </body>
+</html>

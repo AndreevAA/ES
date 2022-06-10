@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chart.js Example</title>
+    <!-- import plugin script -->
+    <script src='../../static/Charts.min.js'></script>
+  </head>
+  <body>
+  <h1>Страница Администратора (Create Update Delete)</h1>
+<a href="/dashboard">Статистика</a>
+        <a href="/log_out">Выход из аккаунта</a>
+        <a href="/moderate">Управление данными</a>
+      <form>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Регион:<input type="text" name="city" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите регион"></label>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+      <h1>Simple Line Chart</h1>
+    <!-- bar chart canvas element -->
+    <canvas id="citAliveChart" width="600" height="400"></canvas>
+    <p id="caption">The chart is displaying a simple line chart.</p>
+
+    <h1>Simple Line Chart</h1>
+    <!-- bar chart canvas element -->
+    <canvas id="myChart" width="600" height="400"></canvas>
+    <p id="caption">The chart is displaying a simple line chart.</p>
+
+    <h1>Simple Line Chart</h1>
+    <!-- bar chart canvas element -->
+    <canvas id="myChartDataDepth" width="600" height="400"></canvas>
+    <p id="caption">The chart is displaying a simple line chart.</p>
+
+      <h1>Simple Line Chart</h1>
+    <!-- bar chart canvas element -->
+    <canvas id="myChartDataLiveLength" width="600" height="400"></canvas>
+    <p id="caption">The chart is displaying a simple line chart.</p>
+    <script>
+      // Global parameters:
+      // do not resize the chart canvas when its container does (keep at 600x400px)
+      Chart.defaults.global.responsive = false;
+
+      // define the chart data
+      var chartDatacitAliveChart = {
+        labels : [{% for item in cit_alive.labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ cit_alive.legend }}',
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in cit_alive.values %}
+                      {{item}},
+                    {% endfor %}],
+            spanGaps: false
+        }]
+      }
+
+      // get chart canvas
+      var ctxcitAliveChart = document.getElementById("citAliveChart").getContext("2d");
+
+      // create the chart using the chart canvas
+      var citAliveChart = new Chart(ctxcitAliveChart, {
+        type: 'line',
+        data: chartDatacitAliveChart,
+      });
+
+        //-------
+      // define the chart data
+      var chartData = {
+        labels : [{% for item in birth.labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ birth.legend }}',
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in birth.values %}
+                      {{item}},
+                    {% endfor %}],
+            spanGaps: false
+        }]
+      }
+
+      // get chart canvas
+      var ctx = document.getElementById("myChart").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+      });
+
+      // define the chart data
+      var chartDataDepth = {
+        labels : [{% for item in depth.labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ depth.legend }}',
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in depth.values %}
+                      {{item}},
+                    {% endfor %}],
+            spanGaps: false
+        }]
+      }
+
+      // get chart canvas
+      var ctxDataDepth = document.getElementById("myChartDataDepth").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChartDataDepth = new Chart(ctxDataDepth, {
+        type: 'line',
+        data: chartDataDepth,
+      });
+
+      // define the chart data
+      var chartDataLiveLength = {
+        labels : [{% for item in life_length.labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ life_length.legend }}',
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in life_length.values %}
+                      {{item}},
+                    {% endfor %}],
+            spanGaps: false
+        }]
+      }
+
+      // get chart canvas
+      var ctxLiveLength = document.getElementById("myChartDataLiveLength").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChartDataLiveLength = new Chart(ctxLiveLength, {
+        type: 'line',
+        data: chartDataLiveLength,
+      });
+    </script>
+
+  </body>
+</html>
