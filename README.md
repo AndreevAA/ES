@@ -1,4 +1,4 @@
-# ES - Election system
+# ES - Election statistics
 
 ## Цель работы
 
