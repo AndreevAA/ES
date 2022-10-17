@@ -13,7 +13,7 @@ begin
                 select acs_level as acs_l, id as u_id from inner_s.users where id = usr_id and login = usr_login;
 end;$$;
 
-select * from get_user_access_level(0, 'andreev@easyguest.ru');
+select * from inner_s.users;
 
 /* Getting passport ID */
 create or replace function get_citizen_id_by_passport_id(passport_id int)

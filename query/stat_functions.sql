@@ -77,3 +77,4 @@ begin
             select (extract(year from "depth_date") - extract(year from "birth_date")) as ll, count(extract(year from"depth_date") - extract(year from "birth_date")) as cnt from w_dir.passports where is_depth=true and registration=city group by ll order by ll;
         end if;
 end;$$;
+

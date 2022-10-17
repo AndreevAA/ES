@@ -2,87 +2,79 @@ openapi: 3.0.3
 info:
   title: ES (Election Statistics)
   description: |-
-    You can find out more about ES at [https://github.com/AndreevAA/ES](https://github.com/AndreevAA/ES).
+    You can find out more about ES at [https://github.com/AndreevAA/ES](https://github.com/AndreevAA/ES). This REST API should be used for local working ES WEB-application, because it gives all opportunities for changing accesses, roles and dataa collections.
   contact:
     email: andreev@ingry.tech
   version: 1.0.0
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://127.0.0.1:5000/api/v1
 tags:
-  - name: pet
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
-  - name: store
-    description: Access to Petstore orders
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
   - name: user
-    description: Operations about user
+    description: Everything about project users
+  - name: passport
+    description: Access to Petstore passports
 paths:
-  /pet:
-    put:
+  /user:
+    patch:
       tags:
-        - pet
-      summary: Update an existing pet
-      description: Update an existing pet by Id
-      operationId: updatePet
+        - user
+      summary: Update a user
       requestBody:
-        description: Update an existent pet in the store
         content:
-          application/json:
+          application/json-patch+json:
             schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        required: true
+              $ref: '#/components/schemas/PatchRequest'
       responses:
         '200':
-          description: Successful operation
+          description: Successful response
+      security:
+        - OAuth2: [ admin ]
+
+    get:
+      tags:
+        - user
+      summary: Get list of all system users
+      description: This operation helps you to fetch all users' data, Be carefull because of its having private information.
+      operationId: user
+      responses:
+        '200':
+          description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Pet'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '405':
-          description: Validation exception
+          description: Invalid status value
+        '401':
+          description: Not authenticated
       security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+        - OAuth2: [ admin ]
+
     post:
       tags:
-        - pet
-      summary: Add a new pet to the store
-      description: Add a new pet to the store
-      operationId: addPet
+        - user
+      summary: Add a new user to your local storage
+      description: This operation helps you to add new user to your local storage.
+      operationId: add_user
       requestBody:
-        description: Create a new pet in the store
+        description: Create a new user
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/UserCreating'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/UserCreating'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/UserCreating'
         required: true
       responses:
         '200':
@@ -90,16 +82,100 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: '#/components/schemas/User'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: '#/components/schemas/User'
         '405':
           description: Invalid input
       security:
         - petstore_auth:
             - write:pets
             - read:pets
+
+  /user/{id}:
+    get:
+      tags:
+        - user
+      summary: Get existing system user by his or her id
+      description: This operation helps you to fetch user's data, Be carefull because of its having private information.
+      operationId: user_id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+        '401':
+          description: Not authenticated
+      security:
+        - OAuth2: [ admin ]
+
+    delete:
+      tags:
+        - user
+      summary: Deleting user existing in the storage
+      operationId: delete_user
+      responses:
+        204:
+          description: User was deleted
+        400:
+          description: User doesn't exist
+      security:
+        - OAuth2: [ admin ]
+
+    put:
+      tags:
+        - user
+      summary: Update an existing user
+      description: This operation helps you to update and existing user.
+      operationId: put_user
+      requestBody:
+        description: Update an existent user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreating'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserCreating'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreating'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid login or it exists
+        '404':
+          description: Invalid password
+        '405':
+          description: Invalid acs_lvl
+        '406':
+          description: Validation exception
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+
   /pet/findByStatus:
     get:
       tags:
@@ -401,189 +477,7 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Order not found
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
-  /user/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-    put:
-      tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
+
 components:
   schemas:
     Order:
@@ -664,6 +558,69 @@ components:
           example: Dogs
       xml:
         name: category
+    users:
+      type: array
+      properties:
+        items:
+          $ref: '#/components/schemas/User'
+
+    PatchRequest:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/JSONPatchRequestAddReplaceTest'
+          - $ref: '#/components/schemas/JSONPatchRequestRemove'
+          - $ref: '#/components/schemas/JSONPatchRequestMoveCopy'
+
+    JSONPatchRequestAddReplaceTest:
+      type: object
+      additionalProperties: false
+      required:
+        - value
+        - op
+        - path
+      properties:
+        path:
+          description: A JSON Pointer path.
+          type: string
+        value:
+          description: The value to add, replace or test.
+
+    JSONPatchRequestRemove:
+      type: object
+      additionalProperties: false
+      required:
+        - op
+        - path
+      properties:
+        path:
+          description: A JSON Pointer path.
+          type: string
+        op:
+          description: The operation to perform.
+          type: string
+          enum:
+            - remove
+
+    JSONPatchRequestMoveCopy:
+      type: object
+      additionalProperties: false
+      required:
+        - from
+        - op
+        - path
+
+      properties:
+        path:
+          description: A JSON Pointer path.
+          type: string
+        op:
+          description: The operation to perform.
+          type: string
+          enum:
+            - move
+            - copy
+
     User:
       type: object
       properties:
@@ -671,31 +628,39 @@ components:
           type: integer
           format: int64
           example: 10
-        username:
+        login:
           type: string
-          example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
-        email:
-          type: string
-          example: john@email.com
+          example: petrov
         password:
           type: string
-          example: '12345'
-        phone:
-          type: string
-          example: '12345'
-        userStatus:
+          example: qwerty
+        acs_lvl:
           type: integer
-          description: User Status
-          format: int32
+          format: int64
           example: 1
+          minimum: 0
+          maximum: 2
       xml:
-        name: user
+        name: User
+
+    UserCreating:
+      type: object
+      properties:
+        login:
+          type: string
+          example: petrov
+        password:
+          type: string
+          example: qwerty
+        acs_lvl:
+          type: integer
+          format: int64
+          example: 1
+          minimum: 0
+          maximum: 2
+      xml:
+        name: UserCreating
+
     Tag:
       type: object
       properties:
@@ -779,11 +744,12 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          authorizationUrl: https://es.swagger.io/oauth/authorize
           scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
+            write:users: modify pets in your account
+            read:users: read your pets
     api_key:
       type: apiKey
       name: api_key
       in: header
+
